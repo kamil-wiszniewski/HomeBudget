@@ -8,37 +8,57 @@ using HomeBudget;
 
 MenuActionService actionService = new MenuActionService();
 actionService = Initialize(actionService);
-
-var mainMenu = actionService.GetMenuActionsByMenuName("Main");
-
-for (int i = 0; i < mainMenu.Count; i++) 
-{
-    Console.WriteLine($"{mainMenu[i].Id}. {mainMenu[i].Name}");
-}
-
-var operation = Console.ReadKey();
-
 EntryService entryService = new EntryService();
 
-switch(operation.KeyChar)
-{
-    case '1':
-        var typeCategory = entryService.AddNewEntryView(actionService);
-        entryService.AddNewEntry(typeCategory);
-        break;
 
-    default:
-        Console.WriteLine("Action you entered does not exist");
-        break;
+Console.WriteLine("Welcome to Home Budget App!");
+
+while (true)
+{
+    Console.WriteLine("Please let me know what you want to do:");
+
+    var mainMenu = actionService.GetMenuActionsByMenuName("Main");
+
+    for (int i = 0; i < mainMenu.Count; i++)
+    {
+        Console.WriteLine($"{mainMenu[i].Id}. {mainMenu[i].Name}");
+    }
+
+    var operation = Console.ReadKey();
+
+    switch (operation.KeyChar)
+    {
+        case '1':
+            var typeCategory = entryService.AddNewEntryView(actionService);
+            var id = entryService.AddNewEntry(typeCategory);
+            break;
+
+        case '2':
+            var removeId = entryService.RemoveEntryView();
+            entryService.RemoveEntry(removeId);
+
+            break;
+
+        case '3':
+            var detailId = entryService.EntryDetailSelectionView();
+            entryService.EntryDetailView(detailId);
+
+            break;
+
+
+        default:
+            Console.WriteLine("Action you entered does not exist");
+            break;
+    }
 }
 
 
 static MenuActionService Initialize(MenuActionService actionService)
 {
-    actionService.AddNewAction(1, "Add new transaction", "Main");
-    actionService.AddNewAction(2, "Delete transaction", "Main");
-    actionService.AddNewAction(3, "View transaction", "Main");
-    actionService.AddNewAction(4, "List of transactions", "Main");
+    actionService.AddNewAction(1, "Add new entry", "Main");
+    actionService.AddNewAction(2, "Delete entry", "Main");
+    actionService.AddNewAction(3, "View entry", "Main");
+    actionService.AddNewAction(4, "List of entries", "Main");
 
     actionService.AddNewAction(1, "Income", "AddEntryMenu1");
     actionService.AddNewAction(2, "Expense", "AddEntryMenu1");
