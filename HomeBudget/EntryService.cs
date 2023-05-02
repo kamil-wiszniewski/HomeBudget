@@ -28,12 +28,12 @@ namespace HomeBudget
 
             int[] typeCategory = new int[2];
 
-            //var type = Console.ReadKey();
-            Int32.TryParse(Console.ReadKey().KeyChar.ToString(), out typeCategory[0]);
+            var type = Console.ReadKey();
+            Int32.TryParse(type.KeyChar.ToString(), out typeCategory[0]);
          
             var addEntryMenu2 = actionService.GetMenuActionsByMenuName("AddEntryMenu2");
 
-            Console.WriteLine("Enter the entry category");
+            Console.WriteLine("Enter the entry category:");
 
             for (int i = 0; i < addEntryMenu2.Count; i++)
             {
@@ -137,6 +137,34 @@ namespace HomeBudget
             Console.WriteLine($"Entry date: {entryToShow.Date}");
             Console.WriteLine($"Entry amount: {entryToShow.Amount}");   
             Console.WriteLine($"Entry description: {entryToShow.Description}");
+        }
+
+        public int EntryTypeSelectionView()
+        {
+            Console.WriteLine("Please enter Type id for entry type you want to show:");
+            var typeId = Console.ReadKey();
+            int id;
+            Int32.TryParse(typeId.KeyChar.ToString(), out id);
+
+            return id;
+        }
+
+        public void EntriesByTypeIdView(int typeId)
+        {
+            List<Entry> toShow = new List<Entry>();
+
+            foreach (var entry in Entries) 
+            { 
+                if (entry.TypeId == typeId) 
+                {
+                    toShow.Add(entry);
+                }
+            }
+
+            for (int i = 0; i < toShow.Count; i++) 
+            {
+                Console.WriteLine($"lp. {i+1} id: {toShow[i].Id} type id: {toShow[i].TypeId} category id: {toShow[i].CategoryId} date: {toShow[i].Date} amount: {toShow[i].Amount} description: {toShow[i].Description}");
+            }
         }
     }
 }

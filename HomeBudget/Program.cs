@@ -1,8 +1,5 @@
 ﻿
-//a Stworzenie(dodanie) nowej transakcji
-//  a1 do wyboru typ
-//  a2 do wyboru kategoria
-//  a3 data, kwota, opis
+
 
 using HomeBudget;
 
@@ -31,6 +28,7 @@ while (true)
         case '1':
             var typeCategory = entryService.AddNewEntryView(actionService);
             var id = entryService.AddNewEntry(typeCategory);
+
             break;
 
         case '2':
@@ -45,6 +43,11 @@ while (true)
 
             break;
 
+        case '4':
+            var typeId = entryService.EntryTypeSelectionView();
+            entryService.EntriesByTypeIdView(typeId);
+
+            break;
 
         default:
             Console.WriteLine("Action you entered does not exist");
@@ -67,8 +70,6 @@ static MenuActionService Initialize(MenuActionService actionService)
     actionService.AddNewAction(2, "entertainment", "AddEntryMenu2");
     actionService.AddNewAction(3, "health", "AddEntryMenu2");
     actionService.AddNewAction(4, "bills", "AddEntryMenu2");
-
-
 
     return actionService;
     

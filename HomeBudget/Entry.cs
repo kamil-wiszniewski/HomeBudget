@@ -11,8 +11,8 @@ namespace HomeBudget
         public int Id { get; set; }
         public int TypeId { get; set; }
         public int CategoryId { get; set; }
-
-        public DateTime Date = new DateTime();
+        public DateTime Date { get; set; }
+        //public DateTime Date = new DateTime();
         public decimal Amount { get; set; }
         public string Description { get; set; }
 
