@@ -2,11 +2,11 @@
 
 
 using HomeBudget;
+using HomeBudget.App.Concrete;
+using HomeBudget.App.Managers;
 
 MenuActionService actionService = new MenuActionService();
-actionService = Initialize(actionService);
-EntryService entryService = new EntryService();
-
+EntryManager entryManager = new EntryManager(actionService);
 
 Console.WriteLine("Welcome to Home Budget App!");
 
@@ -26,26 +26,23 @@ while (true)
     switch (operation.KeyChar)
     {
         case '1':
-            var typeCategory = entryService.AddNewEntryView(actionService);
-            var id = entryService.AddNewEntry(typeCategory);
+            var newId = entryManager.AddNewEntry();
 
             break;
 
         case '2':
-            var removeId = entryService.RemoveEntryView();
-            entryService.RemoveEntry(removeId);
+            entryManager.RemoveEntry();  
 
             break;
 
         case '3':
-            var detailId = entryService.EntryDetailSelectionView();
-            entryService.EntryDetailView(detailId);
+            entryManager.EntryDetailView();
 
             break;
 
         case '4':
-            var typeId = entryService.EntryTypeSelectionView();
-            entryService.EntriesByTypeIdView(typeId);
+            /*var typeId = entryService.EntryTypeSelectionView();
+            entryService.EntriesByTypeIdView(typeId);*/
 
             break;
 
@@ -56,21 +53,3 @@ while (true)
 }
 
 
-static MenuActionService Initialize(MenuActionService actionService)
-{
-    actionService.AddNewAction(1, "Add new entry", "Main");
-    actionService.AddNewAction(2, "Delete entry", "Main");
-    actionService.AddNewAction(3, "View entry", "Main");
-    actionService.AddNewAction(4, "List of entries", "Main");
-
-    actionService.AddNewAction(1, "Income", "AddEntryMenu1");
-    actionService.AddNewAction(2, "Expense", "AddEntryMenu1");
-
-    actionService.AddNewAction(1, "grocery", "AddEntryMenu2");
-    actionService.AddNewAction(2, "entertainment", "AddEntryMenu2");
-    actionService.AddNewAction(3, "health", "AddEntryMenu2");
-    actionService.AddNewAction(4, "bills", "AddEntryMenu2");
-
-    return actionService;
-    
-}
