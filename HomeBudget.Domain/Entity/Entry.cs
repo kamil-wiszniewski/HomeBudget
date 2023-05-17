@@ -16,7 +16,8 @@ namespace HomeBudget.Domain.Entity
         }
         public typeId TypeId { get; set; }
         //public int TypeId { get; set; }
-        public int CategoryId { get; set; }
+        //public int CategoryId { get; set; }
+        public Category Category { get; set; }
         public DateTime Date { get; set; }
         //public DateTime Date = new DateTime();
         public decimal Amount { get; set; }
@@ -26,11 +27,11 @@ namespace HomeBudget.Domain.Entity
         {
             
         }
-        public Entry(int id, typeId typeId, int categoryId, DateTime date, decimal amount, string description)
+        public Entry(int id, typeId typeId, Category category, DateTime date, decimal amount, string description)
         {
             Id = id;
             TypeId = typeId;
-            CategoryId = categoryId;
+            Category = category;
             Date = date;
             Amount = amount;
             Description = description;

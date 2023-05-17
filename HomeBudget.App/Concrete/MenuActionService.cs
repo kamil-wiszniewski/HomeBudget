@@ -34,15 +34,16 @@ namespace HomeBudget.App.Concrete
             AddItem(new MenuAction(1, "Add new entry", "Main"));
             AddItem(new MenuAction(2, "Delete entry", "Main"));
             AddItem(new MenuAction(3, "View entry", "Main"));
-            AddItem(new MenuAction(4, "List of entries", "Main"));
+            AddItem(new MenuAction(4, "Manage categories", "Main"));
+            AddItem(new MenuAction(5, "List of entries", "Main"));
 
             AddItem(new MenuAction(1, "Income", "AddEntryMenu1"));
             AddItem(new MenuAction(2, "Expense", "AddEntryMenu1"));
 
-            AddItem(new MenuAction(1, "grocery", "AddEntryMenu2"));
-            AddItem(new MenuAction(2, "entertainment", "AddEntryMenu2"));
-            AddItem(new MenuAction(3, "health", "AddEntryMenu2"));
-            AddItem(new MenuAction(4, "bills", "AddEntryMenu2")); 
+            AddItem(new MenuAction(1, "Show all categories", "ManageCategories"));
+            AddItem(new MenuAction(2, "Add category", "ManageCategories"));
+            AddItem(new MenuAction(3, "Remove Category", "ManageCategories"));
+
         }
     }
 }

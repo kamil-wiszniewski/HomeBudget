@@ -5,14 +5,19 @@ using HomeBudget;
 using HomeBudget.App.Concrete;
 using HomeBudget.App.Managers;
 
-MenuActionService actionService = new MenuActionService();
-EntryManager entryManager = new EntryManager(actionService);
 
-Console.WriteLine("Welcome to Home Budget App!");
+CategoryService categoryService = new CategoryService();    
+MenuActionService actionService = new MenuActionService();
+EntryManager entryManager = new EntryManager(actionService, categoryService);
+CategoryManager categoryManager = new CategoryManager(categoryService, actionService);
+
+
 
 while (true)
 {
-    Console.WriteLine("Please let me know what you want to do:");
+    Console.Clear();
+    Console.WriteLine("WELCOME TO HOME BUDGET APP!");
+    Console.WriteLine("\nPlease let me know what you want to do:");
 
     var mainMenu = actionService.GetMenuActionsByMenuName("Main");
 
@@ -41,13 +46,14 @@ while (true)
             break;
 
         case '4':
-            /*var typeId = entryService.EntryTypeSelectionView();
-            entryService.EntriesByTypeIdView(typeId);*/
+            categoryManager.ManageCategories();
 
             break;
 
         default:
             Console.WriteLine("Action you entered does not exist");
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
             break;
     }
 }

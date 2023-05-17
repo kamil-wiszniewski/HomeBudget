@@ -18,10 +18,10 @@ namespace HomeBudget.App.Concrete
             if (answer.KeyChar.ToString() == "y")
             {
                 Console.WriteLine();
-                Console.WriteLine("Id\tType Id\t\tCategory Id\tDate\t\tAmount\tDescription");
+                Console.WriteLine("Id\tType\t\tCategory\tDate\t\tAmount\tDescription");
                 foreach (var entry in entries)
                 {
-                    Console.WriteLine($"{entry.Id}\t{entry.TypeId}\t\t{entry.CategoryId}\t\t{entry.Date.ToShortDateString()}\t{entry.Amount}\t{entry.Description}");
+                    Console.WriteLine($"{entry.Id}\t{entry.TypeId}\t\t{entry.Category.Name}\t\t{entry.Date.ToShortDateString()}\t{entry.Amount}\t{entry.Description}");
                 }
             }                    
 

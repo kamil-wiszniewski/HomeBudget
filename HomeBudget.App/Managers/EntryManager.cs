@@ -13,16 +13,20 @@ namespace HomeBudget.App.Managers
     {
         private readonly MenuActionService _actionService;
         private EntryService _entryService;
-        public EntryManager(MenuActionService actionservice)
+        private CategoryService _categoryService;
+        public EntryManager(MenuActionService actionservice, CategoryService categoryService)
         {
             _entryService = new EntryService();
+            _categoryService = categoryService;
             _actionService = actionservice;
         }
         public int AddNewEntry()
         {
             var addEntryMenu1 = _actionService.GetMenuActionsByMenuName("AddEntryMenu1");
 
-            Console.WriteLine("Enter the entry type:");
+            Console.Clear();    
+            Console.WriteLine("ADD NEW ENTRY");
+            Console.WriteLine("\nEnter the entry type:");
 
             for (int i = 0; i < addEntryMenu1.Count; i++)
             {
@@ -33,39 +37,43 @@ namespace HomeBudget.App.Managers
             var type = Console.ReadKey();
             Int32.TryParse(type.KeyChar.ToString(), out typeId);
             
-            var addEntryMenu2 = _actionService.GetMenuActionsByMenuName("AddEntryMenu2");
+            //var addEntryMenu2 = _actionService.GetMenuActionsByMenuName("AddEntryMenu2");
+            var categories = _categoryService.GetAllItmes();
+            Console.WriteLine("\n\nEnter the entry category:");
 
-            Console.WriteLine("Enter the entry category:");
-
-            for (int i = 0; i < addEntryMenu2.Count; i++)
+            for (int i = 0; i < categories.Count; i++)
             {
-                Console.WriteLine($"{addEntryMenu2[i].Id}. {addEntryMenu2[i].Name}");
+                Console.WriteLine($"{categories[i].Id}. {categories[i].Name}");
             }
 
             int categoryId;
-            var category = Console.ReadKey();
-            Int32.TryParse(category.KeyChar.ToString(), out categoryId);
+            var chosenCategory = Console.ReadKey();
+            Int32.TryParse(chosenCategory.KeyChar.ToString(), out categoryId);
+            Category category = new Category(categoryId, categories[categoryId - 1].Name);
 
-            Console.WriteLine("Please enter date for new entry (in dd/mm/yyyy format):");
+            Console.WriteLine("\n\nPlease enter date for new entry (in dd/mm/yyyy format):");
             var date = Console.ReadLine();
             DateTime entryDate;
             while (!DateTime.TryParse(date, out entryDate))
             {
-                Console.WriteLine("You have entered an incorrect value. Please try again");
+                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
                 date = Console.ReadLine();
             }
 
-            Console.WriteLine("Please enter amount for new entry:");
+            Console.WriteLine("\nPlease enter amount for new entry:");
             var amount = Console.ReadLine();
             decimal entryAmount;
             Decimal.TryParse(amount, out entryAmount);
 
-            Console.WriteLine("Please enter description for new entry:");
+            Console.WriteLine("\nPlease enter description for new entry:");
             var entryDescription = Console.ReadLine();
 
             var lastId = _entryService.GetLastId();
-            Entry entry = new Entry(lastId+1, (Entry.typeId)typeId, categoryId, entryDate, entryAmount, entryDescription); 
+            Entry entry = new Entry(lastId+1, (Entry.typeId)typeId, category, entryDate, entryAmount, entryDescription); 
             _entryService.AddItem(entry);
+
+            Console.WriteLine("\nNew entry has been added. Press any key to continue...");
+            Console.ReadKey();
 
             return entry.Id;
         }
@@ -113,7 +121,7 @@ namespace HomeBudget.App.Managers
                 Entry entryToShow = entries.FirstOrDefault(e => e.Id == idToCheck);
                 Console.WriteLine($"Entry id: {entryToShow.Id}");
                 Console.WriteLine($"Entry type id: {entryToShow.TypeId}");
-                Console.WriteLine($"Entry category id: {entryToShow.CategoryId}");
+                Console.WriteLine($"Entry category id: {entryToShow.Category.Name}");
                 Console.WriteLine($"Entry date: {entryToShow.Date.ToShortDateString()}");
                 Console.WriteLine($"Entry amount: {entryToShow.Amount}");
                 Console.WriteLine($"Entry description: {entryToShow.Description}");
