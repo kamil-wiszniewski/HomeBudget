@@ -31,7 +31,7 @@ namespace HomeBudget.App.Concrete
             AddItem(new Category(1, "food"));
             AddItem(new Category(2, "health"));
             AddItem(new Category(3, "bills"));
-            AddItem(new Category(4, "education"));
+            AddItem(new Category(4, "salary"));
         }
     }
 }

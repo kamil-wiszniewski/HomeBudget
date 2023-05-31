@@ -22,73 +22,78 @@ namespace HomeBudget.App.Managers
 
         public void ManageCategories()
         {
-            Console.Clear();
-            Console.WriteLine("MANAGE CATEGORIES");
-            Console.WriteLine("\nPlease let me know what you want to do:");
-
-            var categoryMenu = _actionService.GetMenuActionsByMenuName("ManageCategories");
-            var categories = _categoryService.GetAllItmes();
-
-            for (int i = 0; i < categoryMenu.Count; i++)
+            while (true)
             {
-                Console.WriteLine($"{categoryMenu[i].Id}. {categoryMenu[i].Name}");
-            }
+                Console.Clear();
+                Console.WriteLine("MANAGE CATEGORIES");
+                Console.WriteLine("\nPlease let me know what you want to do:");
 
-            var operation = Console.ReadKey();
+                var categoryMenu = _actionService.GetMenuActionsByMenuName("ManageCategories");
+                var categories = _categoryService.GetAllItmes();
 
-            switch (operation.KeyChar)
-            {
-                case '1':
-                    Console.Clear();
-                    Console.WriteLine("SHOW ALL CATEGORIES");
-                    _categoryService.ShowAllCategories(categories);
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
-                    break;
+                for (int i = 0; i < categoryMenu.Count; i++)
+                {
+                    Console.WriteLine($"{categoryMenu[i].Id}. {categoryMenu[i].Name}");
+                }
+                Console.WriteLine("\n0. Exit");
 
-                case '2':
-                    Console.WriteLine("\nDo you want to see all categories? (y/n)");
-                    var answer = Console.ReadKey();
+                var operation = Console.ReadKey();
 
-                    if (answer.KeyChar.ToString() == "y")
-                    {
+                switch (operation.KeyChar)
+                {
+                    case '1':
+                        Console.Clear();
+                        Console.WriteLine("SHOW ALL CATEGORIES");
                         _categoryService.ShowAllCategories(categories);
-                    }
-
-                    Console.WriteLine("\nPlease enter name for new category:");
-                    var categoryName = Console.ReadLine();
-
-                    bool exists = categories.Any(category => category.Name == categoryName);
-
-                    if (exists)
-                    {
-                        Console.WriteLine("Category with name {0} already exists.", categoryName);
                         Console.WriteLine("\nPress any key to continue...");
                         Console.ReadKey();
-                    }
-                    else
-                    {
-                        var lastId = _categoryService.GetLastId();
-                        Category category = new Category(lastId + 1, categoryName);
-                        _categoryService.AddItem(category);
+                        break;
 
-                        Console.WriteLine($"\nCategory {category.Name} has been added. Press any key to continue...");
+                    case '2':
+                        Console.WriteLine("\nDo you want to see all categories? (y/n)");
+                        var answer = Console.ReadKey();
+
+                        if (answer.KeyChar.ToString() == "y")
+                        {
+                            _categoryService.ShowAllCategories(categories);
+                        }
+
+                        Console.WriteLine("\nPlease enter name for new category:");
+                        var categoryName = Console.ReadLine();
+
+                        bool exists = categories.Any(category => category.Name == categoryName);
+
+                        if (exists)
+                        {
+                            Console.WriteLine("Category with name {0} already exists.", categoryName);
+                            Console.WriteLine("\nPress any key to continue...");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            var lastId = _categoryService.GetLastId();
+                            Category category = new Category(lastId + 1, categoryName);
+                            _categoryService.AddItem(category);
+
+                            Console.WriteLine($"\nCategory {category.Name} has been added. Press any key to continue...");
+                            Console.ReadKey();
+                        }
+
+                        break;
+
+                    case '3':
+                        RemoveCategory();
+                        break;
+
+                    case '0':
+                        return;
+
+                    default:
+                        Console.WriteLine("Action you entered does not exist");
+                        Console.WriteLine("\nPress any key to continue...");
                         Console.ReadKey();
-                    }
-
-
-
-                    break;
-
-                case '3':
-                    RemoveCategory();
-                    break;
-
-                default:
-                    Console.WriteLine("Action you entered does not exist");
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
-                    break;
+                        break;
+                }
             }
         }
         public void RemoveCategory()
@@ -114,15 +119,18 @@ namespace HomeBudget.App.Managers
             {
                 Category categoryToRemove = categories.FirstOrDefault(e => e.Id == idToCheck);
                 _categoryService.RemoveItem(categoryToRemove);
-                Console.WriteLine("Category with ID {0} has been removed. Press any key to continue...", idToCheck);
-                Console.ReadKey();
+                Console.WriteLine("Category with id {0} has been removed.", idToCheck);
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();                
             }
             else
             {
-                Console.WriteLine("Entry with ID {0} does not exist.", idToCheck);
+                Console.WriteLine("Category with this id does not exist.", idToCheck);
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
             }
         }
-        
 
+        
     }
 }

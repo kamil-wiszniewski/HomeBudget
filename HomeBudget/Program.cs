@@ -8,9 +8,9 @@ using HomeBudget.App.Managers;
 
 CategoryService categoryService = new CategoryService();    
 MenuActionService actionService = new MenuActionService();
-EntryManager entryManager = new EntryManager(actionService, categoryService);
+EntryService entryService = new EntryService(categoryService);
 CategoryManager categoryManager = new CategoryManager(categoryService, actionService);
-
+EntryManager entryManager = new EntryManager(actionService, categoryService, entryService);
 
 
 while (true)
@@ -26,32 +26,57 @@ while (true)
         Console.WriteLine($"{mainMenu[i].Id}. {mainMenu[i].Name}");
     }
 
+    Console.WriteLine("\n0. Exit");
+    
     var operation = Console.ReadKey();
 
     switch (operation.KeyChar)
     {
         case '1':
-            var newId = entryManager.AddNewEntry();
+            var entries = entryService.GetAllItmes();
+
+            Console.Clear();
+            Console.WriteLine("SHOW ALL ENTRIES");
+
+            entryService.ShowAllEntries(entries);
+            
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
 
             break;
 
         case '2':
-            entryManager.RemoveEntry();  
+            var newId = entryManager.AddNewEntry();
 
             break;
 
         case '3':
-            entryManager.EntryDetailView();
+            entryManager.RemoveEntry();  
 
             break;
 
         case '4':
+            entryManager.EntryDetailView();
+
+            break;
+
+        case '5':
+            entryManager.SearchEntries();
+
+            break;
+
+        case '6':
             categoryManager.ManageCategories();
+
+            break;        
+
+        case '0':
+            Environment.Exit(0);
 
             break;
 
         default:
-            Console.WriteLine("Action you entered does not exist");
+            Console.WriteLine("\nAction you entered does not exist");
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
             break;

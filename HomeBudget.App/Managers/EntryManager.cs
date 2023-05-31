@@ -14,9 +14,9 @@ namespace HomeBudget.App.Managers
         private readonly MenuActionService _actionService;
         private EntryService _entryService;
         private CategoryService _categoryService;
-        public EntryManager(MenuActionService actionservice, CategoryService categoryService)
+        public EntryManager(MenuActionService actionservice, CategoryService categoryService, EntryService entryService)
         {
-            _entryService = new EntryService();
+            _entryService = entryService;
             _categoryService = categoryService;
             _actionService = actionservice;
         }
@@ -36,8 +36,14 @@ namespace HomeBudget.App.Managers
             int typeId;
             var type = Console.ReadKey();
             Int32.TryParse(type.KeyChar.ToString(), out typeId);
-            
-            //var addEntryMenu2 = _actionService.GetMenuActionsByMenuName("AddEntryMenu2");
+
+            while (typeId != 1 && typeId != 2)
+            {
+                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
+                type = Console.ReadKey();
+                Int32.TryParse(type.KeyChar.ToString(), out typeId);
+            }
+
             var categories = _categoryService.GetAllItmes();
             Console.WriteLine("\n\nEnter the entry category:");
 
@@ -47,8 +53,14 @@ namespace HomeBudget.App.Managers
             }
 
             int categoryId;
-            var chosenCategory = Console.ReadKey();
-            Int32.TryParse(chosenCategory.KeyChar.ToString(), out categoryId);
+            var chosenCategory = Console.ReadKey();            
+
+            while (!Int32.TryParse(chosenCategory.KeyChar.ToString(), out categoryId) || categoryId > categories.Count)
+            {
+                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
+                chosenCategory = Console.ReadKey();                
+            }
+
             Category category = new Category(categoryId, categories[categoryId - 1].Name);
 
             Console.WriteLine("\n\nPlease enter date for new entry (in dd/mm/yyyy format):");
@@ -63,7 +75,12 @@ namespace HomeBudget.App.Managers
             Console.WriteLine("\nPlease enter amount for new entry:");
             var amount = Console.ReadLine();
             decimal entryAmount;
-            Decimal.TryParse(amount, out entryAmount);
+            
+            while(!Decimal.TryParse(amount, out entryAmount))
+            {
+                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
+                amount = Console.ReadLine();
+            }
 
             Console.WriteLine("\nPlease enter description for new entry:");
             var entryDescription = Console.ReadLine();
@@ -80,9 +97,18 @@ namespace HomeBudget.App.Managers
         public void RemoveEntry()
         {
             var entries = _entryService.GetAllItmes();
-            _entryService.ShowAllEntries(entries);
 
-            Console.WriteLine("Please enter the id of the entry you want to remove");
+            Console.Clear();
+            Console.WriteLine("REMOVE ENTRY");
+            Console.WriteLine("\nDo you want to see all entries? (y/n)");
+            
+            var answer = Console.ReadKey();
+            if (answer.KeyChar.ToString() == "y")
+            {
+                _entryService.ShowAllEntries(entries);
+            }
+
+            Console.WriteLine("\nPlease enter the id of the entry you want to remove");
             var idEntered = Console.ReadLine();
 
             int idToCheck;
@@ -92,23 +118,35 @@ namespace HomeBudget.App.Managers
 
             if (exists)
             {
-                Entry entryToRemove = entries.FirstOrDefault(e => e.Id == idToCheck);
-                Console.WriteLine("Element with ID {0} has been removed.", idToCheck);
+                Entry entryToRemove = entries.FirstOrDefault(e => e.Id == idToCheck);               
                 _entryService.RemoveItem(entryToRemove);
+                Console.WriteLine("\nEntry with id {0} has been removed.", idToCheck);
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
             }
             else
             {
-                Console.WriteLine("Entry with ID {0} does not exist.", idToCheck);
+                Console.WriteLine("\nEntry with this id does not exist.", idToCheck);
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
             }
 
         }
         public void EntryDetailView()
         {
-
             var entries = _entryService.GetAllItmes();
-            _entryService.ShowAllEntries(entries);
+            
+            Console.Clear();
+            Console.WriteLine("ENTRY DETAILS VIEW");
+            Console.WriteLine("\nDo you want to see all entries? (y/n)");
 
-            Console.WriteLine("Please enter the id of the entry you want to see");
+            var answer = Console.ReadKey();
+            if (answer.KeyChar.ToString() == "y")
+            {
+                _entryService.ShowAllEntries(entries);
+            }
+
+            Console.WriteLine("\nPlease enter the id of the entry you want to see");
             var idEntered = Console.ReadLine();
 
             int idToCheck;
@@ -125,13 +163,312 @@ namespace HomeBudget.App.Managers
                 Console.WriteLine($"Entry date: {entryToShow.Date.ToShortDateString()}");
                 Console.WriteLine($"Entry amount: {entryToShow.Amount}");
                 Console.WriteLine($"Entry description: {entryToShow.Description}");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
 
             }
             else
             {
-                Console.WriteLine("Entry with ID {0} does not exist.", idToCheck);
+                Console.WriteLine("Entry with this id does not exist.", idToCheck);
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
             }
         }
+
+        public void SearchEntries()
+        {
+            var entries = _entryService.GetAllItmes();
+            List<Entry> filteredEntries = new List<Entry>();
             
+            string typeIdFilter = "all";
+            string inputCategory = "all";            
+            DateTime startDate = entries.Min(e => e.Date);
+            DateTime endDate = entries.Max(e => e.Date);
+            decimal minAmount = 0;
+            decimal maxAmount = entries.Max(e =>e.Amount);
+
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("SEARCH ENTRIES");
+                Console.WriteLine("\nFILTERS");
+
+                if (typeIdFilter == "all")
+                {
+                    Console.WriteLine("1. Set type filter. Currently set: ALL");
+                }
+                else
+                {
+                    int typeIdFilterInt = Int32.Parse(typeIdFilter);
+                    Console.WriteLine("1. Set type filter. Currently set: " + (Entry.typeId)typeIdFilterInt);
+                }
+
+                var categories = _categoryService.GetAllItmes();
+                List<int> searchedCategories = new List<int>();               
+                if (inputCategory == "all")
+                {
+                    searchedCategories = categories.Select(c => c.Id).ToList();
+                    Console.WriteLine("2. Set category filter. Currently set: ALL");
+                }
+                else
+                {
+                    string[] values = inputCategory.Split(',');
+                    foreach (string value in values)
+                    {
+                        int intValue;
+                        if (int.TryParse(value, out intValue))
+                        {
+                            searchedCategories.Add(intValue);
+                        }
+                    }
+                    Console.Write("2. Set category filter. Currently set: ");
+                    foreach (var categoryId in searchedCategories)
+                    {
+                        var categoryToShow = categories.FirstOrDefault(c => c.Id == categoryId)?.Name;
+                        Console.Write(categoryToShow + " ");
+                    }
+                    Console.WriteLine();
+                }
+                Console.WriteLine("3. Set date filter. Currently set: from " + startDate.ToShortDateString() + " to " + endDate.ToShortDateString());
+                Console.WriteLine("4. Set amount filter. Currently set: from " + minAmount + " to " + maxAmount);
+                Console.WriteLine("\n5. Search");
+                Console.WriteLine("\n0. Exit");
+
+                Console.WriteLine("\nPlease enter what you want to do");
+                var operation = Console.ReadKey();
+
+                switch (operation.KeyChar)
+                {
+                    case '1':
+                        Console.WriteLine("\n\nPlease type: \n1 for Income \n2 for Expense or\nall \n\nand then press Enter");
+                        var typeInput = Console.ReadLine();
+                        if (typeInput == "all")
+                        {
+                            typeIdFilter = "all";
+                        }
+                        else
+                        {
+                            typeIdFilter = typeInput;
+                        }
+
+                        break;
+
+                    case '2':                                          
+                        _categoryService.ShowAllCategories(categories);
+                        Console.WriteLine("\nPlease enter category numbers (separated by comma) you want to see and then press Enter. \nOr please enter all and than press Enter");
+                        inputCategory = Console.ReadLine();                    
+
+                        break;
+                    case '3':
+                        Console.WriteLine("\nPlease enter a start date (in dd/mm/yyyy format) \nor press just Enter to set the date of the first entry");                        
+                        var date = Console.ReadLine();
+                        
+                        if (string.IsNullOrWhiteSpace(date)) 
+                        {
+                            startDate = entries.Min(e => e.Date);
+                        }
+                        else 
+                        {
+                            while (!DateTime.TryParse(date, out startDate))
+                            {
+                                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
+                                date = Console.ReadLine();
+                            }
+                        }
+                        
+                        Console.WriteLine("\nPlease enter an end date (in dd/mm/yyyy format) \nor press just Enter to set the date of the last entry");
+                        var date2 = Console.ReadLine();
+
+                        if (string.IsNullOrWhiteSpace(date2))
+                        {
+                            endDate = entries.Max(e => e.Date);
+                        }
+                        else
+                        {
+                            while (!DateTime.TryParse(date2, out endDate))
+                            {
+                                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
+                                date2 = Console.ReadLine();
+                            }
+                        }
+
+                        break;
+                    case '4':
+                        Console.WriteLine("\nPlease set minimal amount  \nor press just Enter to set 0");
+                        var amount = Console.ReadLine();
+
+                        if (string.IsNullOrWhiteSpace(amount))
+                        {
+                            minAmount = 0;
+                        }
+                        else
+                        {
+                            while (!Decimal.TryParse(amount, out minAmount))
+                            {
+                                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
+                                amount = Console.ReadLine();
+                            }
+                        }
+
+                        Console.WriteLine("\nPlease set maximal amount  \nor press just Enter to set the highest amount of all entries ");
+                        var amount2 = Console.ReadLine();
+
+                        if (string.IsNullOrWhiteSpace(amount2))
+                        {
+                            maxAmount = entries.Max(e => e.Amount);
+                        }
+                        else
+                        {
+                            while (!Decimal.TryParse(amount2, out maxAmount))
+                            {
+                                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
+                                amount2 = Console.ReadLine();
+                            }
+                        }
+
+                        break;
+                    case '5':
+                        if (typeIdFilter == "all")
+                        {
+                            if (inputCategory == "all")
+                            {
+                                filteredEntries = entries.Where(e => e.Date >= startDate && e.Date <= endDate &&
+                                                                     e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
+                                _entryService.ShowFilteredEntries(filteredEntries);
+                            }
+                            else
+                            {
+                                filteredEntries = entries.Where(e => searchedCategories.Contains(e.Category.Id) &&
+                                                                e.Date >= startDate && e.Date <= endDate &&
+                                                                e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
+                                _entryService.ShowFilteredEntries(filteredEntries);
+                            }
+                        }
+                        else if (typeIdFilter == "1")
+                        {
+                            if (inputCategory == "all")
+                            {
+                                filteredEntries = entries.Where(e => e.TypeId == Entry.typeId.Income &&
+                                                                     e.Date >= startDate && e.Date <= endDate &&
+                                                                     e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
+                                _entryService.ShowFilteredEntries(filteredEntries);
+                            }
+                            else
+                            {
+                                filteredEntries = entries.Where(e => searchedCategories.Contains(e.Category.Id) &&
+                                                                e.TypeId == Entry.typeId.Income &&
+                                                                e.Date >= startDate && e.Date <= endDate &&
+                                                                e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
+                                _entryService.ShowFilteredEntries(filteredEntries);
+                            }
+                        }
+                        else
+                        {
+                            if (inputCategory == "all")
+                            {
+                                filteredEntries = entries.Where(e => e.TypeId == Entry.typeId.Expense &&
+                                                                     e.Date >= startDate && e.Date <= endDate &&
+                                                                     e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
+                                _entryService.ShowFilteredEntries(filteredEntries);
+                            }
+                            else
+                            {
+                                filteredEntries = entries.Where(e => searchedCategories.Contains(e.Category.Id) &&
+                                                                e.TypeId == Entry.typeId.Expense &&
+                                                                e.Date >= startDate && e.Date <= endDate &&
+                                                                e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
+                                _entryService.ShowFilteredEntries(filteredEntries);
+                            }
+                        }                            
+                        break;
+                    case '0':
+                        return;
+
+
+                    default:
+                        Console.WriteLine("\nAction you entered does not exist");
+                        Console.WriteLine("\nPress any key to continue...");
+                        Console.ReadKey();
+                        break;
+                }
+            }
+
+
+            /*var statisticMenu = _actionService.GetMenuActionsByMenuName("StatisticMenu");       
+            for (int i = 0; i < statisticMenu.Count; i++)
+            {
+                Console.WriteLine($"{statisticMenu[i].Id}. {statisticMenu[i].Name}");
+            }
+
+            int entryType;
+            var type = Console.ReadKey();
+            Int32.TryParse(type.KeyChar.ToString(), out entryType);
+
+            var categories = _categoryService.GetAllItmes();
+            List<int> searchedCategories = new List<int>(); 
+            _categoryService.ShowAllCategories(categories);
+
+            Console.WriteLine("\nPlease enter category numbers (separated by comma) you want to see and then press Enter. \nOr please enter \"all\" and than press Enter to see them all");
+            string input = Console.ReadLine(); 
+
+            if (input == "all") 
+            {
+                searchedCategories = categories.Select(c => c.Id).ToList(); 
+            }
+            else 
+            {
+                string[] values = input.Split(','); 
+                foreach (string value in values) 
+                {
+                    int intValue;
+                    if (int.TryParse(value, out intValue))
+                    {
+                        searchedCategories.Add(intValue);
+                    }
+                }
+            }
+            foreach (int value in searchedCategories)
+            {
+                Console.WriteLine(value);
+            }
+
+
+            Console.WriteLine("\nPlease enter a start date (in dd/mm/yyyy format)");
+            
+            var date = Console.ReadLine();
+            DateTime startDate;
+            while (!DateTime.TryParse(date, out startDate))
+            {
+                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
+                date = Console.ReadLine();
+            }
+            
+            Console.WriteLine("\nPlease enter an end date (in dd/mm/yyyy format)");
+
+            var date2 = Console.ReadLine();
+            DateTime endDate;
+            while (!DateTime.TryParse(date2, out endDate))
+            {
+                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
+                date2 = Console.ReadLine();
+            }
+
+            var entries = _entryService.GetAllItmes();
+            var searchedEntries = new List<Entry>();
+            if(entryType == 2) 
+            {
+                searchedEntries = entries.Where(e => e.TypeId == Entry.typeId.Expense && searchedCategories.Contains(e.Category.Id)).ToList(); 
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Id\tType\t\tCategory\tDate\t\tAmount\tDescription");
+            foreach (var entry in searchedEntries)
+            {
+                Console.WriteLine($"{entry.Id}\t{entry.TypeId}\t\t{entry.Category.Name}\t\t{entry.Date.ToShortDateString()}\t{entry.Amount}\t{entry.Description}");
+            }*/
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+
+        }
     }
 }

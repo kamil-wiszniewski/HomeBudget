@@ -31,11 +31,12 @@ namespace HomeBudget.App.Concrete
         }
         private void Initialize()
         {
-            AddItem(new MenuAction(1, "Add new entry", "Main"));
-            AddItem(new MenuAction(2, "Delete entry", "Main"));
-            AddItem(new MenuAction(3, "View entry", "Main"));
-            AddItem(new MenuAction(4, "Manage categories", "Main"));
-            AddItem(new MenuAction(5, "List of entries", "Main"));
+            AddItem(new MenuAction(1, "Show all entries", "Main"));
+            AddItem(new MenuAction(2, "Add new entry", "Main"));
+            AddItem(new MenuAction(3, "Remove entry", "Main"));
+            AddItem(new MenuAction(4, "Entry details view", "Main"));
+            AddItem(new MenuAction(5, "Search for entries (with different filters)", "Main"));
+            AddItem(new MenuAction(6, "Manage categories", "Main"));
 
             AddItem(new MenuAction(1, "Income", "AddEntryMenu1"));
             AddItem(new MenuAction(2, "Expense", "AddEntryMenu1"));
@@ -44,6 +45,9 @@ namespace HomeBudget.App.Concrete
             AddItem(new MenuAction(2, "Add category", "ManageCategories"));
             AddItem(new MenuAction(3, "Remove Category", "ManageCategories"));
 
+            AddItem(new MenuAction(1, "Income", "StatisticMenu"));
+            AddItem(new MenuAction(2, "Expense", "StatisticMenu"));
+            AddItem(new MenuAction(3, "All", "StatisticMenu"));
         }
     }
 }
