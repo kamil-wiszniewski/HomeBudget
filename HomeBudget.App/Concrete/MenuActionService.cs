@@ -13,8 +13,7 @@ namespace HomeBudget.App.Concrete
         public MenuActionService() 
         {
             Initialize();
-        }
-        
+        }        
 
         public List<MenuAction> GetMenuActionsByMenuName(string menuName) 
         {

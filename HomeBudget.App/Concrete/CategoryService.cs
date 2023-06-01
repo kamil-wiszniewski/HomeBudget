@@ -22,8 +22,6 @@ namespace HomeBudget.App.Concrete
                 {
                     Console.WriteLine($"{category.Id}\t{category.Name}");
                 }
-            
-
         }
 
         private void Initialize()

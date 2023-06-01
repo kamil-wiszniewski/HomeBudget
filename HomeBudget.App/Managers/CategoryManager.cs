@@ -28,9 +28,9 @@ namespace HomeBudget.App.Managers
                 Console.WriteLine("MANAGE CATEGORIES");
                 Console.WriteLine("\nPlease let me know what you want to do:");
 
-                var categoryMenu = _actionService.GetMenuActionsByMenuName("ManageCategories");
                 var categories = _categoryService.GetAllItmes();
 
+                var categoryMenu = _actionService.GetMenuActionsByMenuName("ManageCategories");     
                 for (int i = 0; i < categoryMenu.Count; i++)
                 {
                     Console.WriteLine($"{categoryMenu[i].Id}. {categoryMenu[i].Name}");
@@ -47,6 +47,7 @@ namespace HomeBudget.App.Managers
                         _categoryService.ShowAllCategories(categories);
                         Console.WriteLine("\nPress any key to continue...");
                         Console.ReadKey();
+
                         break;
 
                     case '2':
@@ -83,6 +84,7 @@ namespace HomeBudget.App.Managers
 
                     case '3':
                         RemoveCategory();
+
                         break;
 
                     case '0':
@@ -92,6 +94,7 @@ namespace HomeBudget.App.Managers
                         Console.WriteLine("Action you entered does not exist");
                         Console.WriteLine("\nPress any key to continue...");
                         Console.ReadKey();
+
                         break;
                 }
             }
@@ -99,6 +102,7 @@ namespace HomeBudget.App.Managers
         public void RemoveCategory()
         {
             var categories = _categoryService.GetAllItmes();
+
             Console.WriteLine("\nDo you want to see all categories? (y/n)");
             var answer2 = Console.ReadKey();
 
@@ -119,6 +123,7 @@ namespace HomeBudget.App.Managers
             {
                 Category categoryToRemove = categories.FirstOrDefault(e => e.Id == idToCheck);
                 _categoryService.RemoveItem(categoryToRemove);
+
                 Console.WriteLine("Category with id {0} has been removed.", idToCheck);
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();                
@@ -129,8 +134,6 @@ namespace HomeBudget.App.Managers
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
             }
-        }
-
-        
+        }        
     }
 }

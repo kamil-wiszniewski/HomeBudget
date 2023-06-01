@@ -18,6 +18,5 @@ namespace HomeBudget.Domain.Entity
             Name = name;
             MenuName = menuName;
         }
-
     }
 }

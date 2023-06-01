@@ -5,13 +5,11 @@ using HomeBudget;
 using HomeBudget.App.Concrete;
 using HomeBudget.App.Managers;
 
-
 CategoryService categoryService = new CategoryService();    
 MenuActionService actionService = new MenuActionService();
 EntryService entryService = new EntryService(categoryService);
 CategoryManager categoryManager = new CategoryManager(categoryService, actionService);
 EntryManager entryManager = new EntryManager(actionService, categoryService, entryService);
-
 
 while (true)
 {
@@ -79,6 +77,7 @@ while (true)
             Console.WriteLine("\nAction you entered does not exist");
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
+
             break;
     }
 }

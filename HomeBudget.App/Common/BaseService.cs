@@ -50,7 +50,6 @@ namespace HomeBudget.App.Common
                 entity = item;
             }
             return entity.Id;
-        }
-       
+        }       
     }    
 }

@@ -1,5 +1,6 @@
 ﻿using HomeBudget.App.Concrete;
 using HomeBudget.Domain.Entity;
+using HomeBudget.Domain.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace HomeBudget.App.Managers
             _categoryService = categoryService;
             _actionService = actionservice;
         }
+
         public int AddNewEntry()
         {
             var addEntryMenu1 = _actionService.GetMenuActionsByMenuName("AddEntryMenu1");
@@ -66,6 +68,7 @@ namespace HomeBudget.App.Managers
             Console.WriteLine("\n\nPlease enter date for new entry (in dd/mm/yyyy format):");
             var date = Console.ReadLine();
             DateTime entryDate;
+
             while (!DateTime.TryParse(date, out entryDate))
             {
                 Console.WriteLine("\nYou have entered an incorrect value. Please try again");
@@ -86,7 +89,7 @@ namespace HomeBudget.App.Managers
             var entryDescription = Console.ReadLine();
 
             var lastId = _entryService.GetLastId();
-            Entry entry = new Entry(lastId+1, (Entry.typeId)typeId, category, entryDate, entryAmount, entryDescription); 
+            Entry entry = new Entry(lastId+1, (TypeId)typeId, category, entryDate, entryAmount, entryDescription); 
             _entryService.AddItem(entry);
 
             Console.WriteLine("\nNew entry has been added. Press any key to continue...");
@@ -130,7 +133,6 @@ namespace HomeBudget.App.Managers
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
             }
-
         }
         public void EntryDetailView()
         {
@@ -165,7 +167,6 @@ namespace HomeBudget.App.Managers
                 Console.WriteLine($"Entry description: {entryToShow.Description}");
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
-
             }
             else
             {
@@ -174,12 +175,13 @@ namespace HomeBudget.App.Managers
                 Console.ReadKey();
             }
         }
-
         public void SearchEntries()
         {
+            var categories = _categoryService.GetAllItmes();
             var entries = _entryService.GetAllItmes();
             List<Entry> filteredEntries = new List<Entry>();
-            
+           
+
             string typeIdFilter = "all";
             string inputCategory = "all";            
             DateTime startDate = entries.Min(e => e.Date);
@@ -189,6 +191,8 @@ namespace HomeBudget.App.Managers
 
             while (true)
             {
+                List<int> searchedCategories = new List<int>();
+
                 Console.Clear();
                 Console.WriteLine("SEARCH ENTRIES");
                 Console.WriteLine("\nFILTERS");
@@ -200,11 +204,9 @@ namespace HomeBudget.App.Managers
                 else
                 {
                     int typeIdFilterInt = Int32.Parse(typeIdFilter);
-                    Console.WriteLine("1. Set type filter. Currently set: " + (Entry.typeId)typeIdFilterInt);
-                }
+                    Console.WriteLine("1. Set type filter. Currently set: " + (Domain.Helpers.TypeId)typeIdFilterInt);
+                }                
 
-                var categories = _categoryService.GetAllItmes();
-                List<int> searchedCategories = new List<int>();               
                 if (inputCategory == "all")
                 {
                     searchedCategories = categories.Select(c => c.Id).ToList();
@@ -221,6 +223,7 @@ namespace HomeBudget.App.Managers
                             searchedCategories.Add(intValue);
                         }
                     }
+
                     Console.Write("2. Set category filter. Currently set: ");
                     foreach (var categoryId in searchedCategories)
                     {
@@ -229,6 +232,7 @@ namespace HomeBudget.App.Managers
                     }
                     Console.WriteLine();
                 }
+
                 Console.WriteLine("3. Set date filter. Currently set: from " + startDate.ToShortDateString() + " to " + endDate.ToShortDateString());
                 Console.WriteLine("4. Set amount filter. Currently set: from " + minAmount + " to " + maxAmount);
                 Console.WriteLine("\n5. Search");
@@ -259,6 +263,7 @@ namespace HomeBudget.App.Managers
                         inputCategory = Console.ReadLine();                    
 
                         break;
+
                     case '3':
                         Console.WriteLine("\nPlease enter a start date (in dd/mm/yyyy format) \nor press just Enter to set the date of the first entry");                        
                         var date = Console.ReadLine();
@@ -293,6 +298,7 @@ namespace HomeBudget.App.Managers
                         }
 
                         break;
+
                     case '4':
                         Console.WriteLine("\nPlease set minimal amount  \nor press just Enter to set 0");
                         var amount = Console.ReadLine();
@@ -327,6 +333,7 @@ namespace HomeBudget.App.Managers
                         }
 
                         break;
+
                     case '5':
                         if (typeIdFilter == "all")
                         {
@@ -348,7 +355,7 @@ namespace HomeBudget.App.Managers
                         {
                             if (inputCategory == "all")
                             {
-                                filteredEntries = entries.Where(e => e.TypeId == Entry.typeId.Income &&
+                                filteredEntries = entries.Where(e => e.TypeId == TypeId.Income &&
                                                                      e.Date >= startDate && e.Date <= endDate &&
                                                                      e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
                                 _entryService.ShowFilteredEntries(filteredEntries);
@@ -356,7 +363,7 @@ namespace HomeBudget.App.Managers
                             else
                             {
                                 filteredEntries = entries.Where(e => searchedCategories.Contains(e.Category.Id) &&
-                                                                e.TypeId == Entry.typeId.Income &&
+                                                                e.TypeId == TypeId.Income &&
                                                                 e.Date >= startDate && e.Date <= endDate &&
                                                                 e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
                                 _entryService.ShowFilteredEntries(filteredEntries);
@@ -366,7 +373,7 @@ namespace HomeBudget.App.Managers
                         {
                             if (inputCategory == "all")
                             {
-                                filteredEntries = entries.Where(e => e.TypeId == Entry.typeId.Expense &&
+                                filteredEntries = entries.Where(e => e.TypeId == TypeId.Expense &&
                                                                      e.Date >= startDate && e.Date <= endDate &&
                                                                      e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
                                 _entryService.ShowFilteredEntries(filteredEntries);
@@ -374,101 +381,26 @@ namespace HomeBudget.App.Managers
                             else
                             {
                                 filteredEntries = entries.Where(e => searchedCategories.Contains(e.Category.Id) &&
-                                                                e.TypeId == Entry.typeId.Expense &&
+                                                                e.TypeId == TypeId.Expense &&
                                                                 e.Date >= startDate && e.Date <= endDate &&
                                                                 e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
                                 _entryService.ShowFilteredEntries(filteredEntries);
                             }
-                        }                            
+                        }  
+                        
                         break;
+
                     case '0':
                         return;
-
 
                     default:
                         Console.WriteLine("\nAction you entered does not exist");
                         Console.WriteLine("\nPress any key to continue...");
-                        Console.ReadKey();
+                        Console.ReadKey();  
+                        
                         break;
                 }
             }
-
-
-            /*var statisticMenu = _actionService.GetMenuActionsByMenuName("StatisticMenu");       
-            for (int i = 0; i < statisticMenu.Count; i++)
-            {
-                Console.WriteLine($"{statisticMenu[i].Id}. {statisticMenu[i].Name}");
-            }
-
-            int entryType;
-            var type = Console.ReadKey();
-            Int32.TryParse(type.KeyChar.ToString(), out entryType);
-
-            var categories = _categoryService.GetAllItmes();
-            List<int> searchedCategories = new List<int>(); 
-            _categoryService.ShowAllCategories(categories);
-
-            Console.WriteLine("\nPlease enter category numbers (separated by comma) you want to see and then press Enter. \nOr please enter \"all\" and than press Enter to see them all");
-            string input = Console.ReadLine(); 
-
-            if (input == "all") 
-            {
-                searchedCategories = categories.Select(c => c.Id).ToList(); 
-            }
-            else 
-            {
-                string[] values = input.Split(','); 
-                foreach (string value in values) 
-                {
-                    int intValue;
-                    if (int.TryParse(value, out intValue))
-                    {
-                        searchedCategories.Add(intValue);
-                    }
-                }
-            }
-            foreach (int value in searchedCategories)
-            {
-                Console.WriteLine(value);
-            }
-
-
-            Console.WriteLine("\nPlease enter a start date (in dd/mm/yyyy format)");
-            
-            var date = Console.ReadLine();
-            DateTime startDate;
-            while (!DateTime.TryParse(date, out startDate))
-            {
-                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
-                date = Console.ReadLine();
-            }
-            
-            Console.WriteLine("\nPlease enter an end date (in dd/mm/yyyy format)");
-
-            var date2 = Console.ReadLine();
-            DateTime endDate;
-            while (!DateTime.TryParse(date2, out endDate))
-            {
-                Console.WriteLine("\nYou have entered an incorrect value. Please try again");
-                date2 = Console.ReadLine();
-            }
-
-            var entries = _entryService.GetAllItmes();
-            var searchedEntries = new List<Entry>();
-            if(entryType == 2) 
-            {
-                searchedEntries = entries.Where(e => e.TypeId == Entry.typeId.Expense && searchedCategories.Contains(e.Category.Id)).ToList(); 
-            }
-
-            Console.WriteLine();
-            Console.WriteLine("Id\tType\t\tCategory\tDate\t\tAmount\tDescription");
-            foreach (var entry in searchedEntries)
-            {
-                Console.WriteLine($"{entry.Id}\t{entry.TypeId}\t\t{entry.Category.Name}\t\t{entry.Date.ToShortDateString()}\t{entry.Amount}\t{entry.Description}");
-            }*/
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
-
         }
     }
 }
