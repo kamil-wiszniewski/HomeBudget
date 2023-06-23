@@ -257,8 +257,9 @@ namespace HomeBudget.App.Managers
 
                         break;
 
-                    case '2':                                          
-                        _categoryService.ShowAllCategories(categories);
+                    case '2':
+                        CategoryManager category = new CategoryManager(_categoryService, _actionService);
+                        category.ShowAllCategories(categories);
                         Console.WriteLine("\nPlease enter category numbers (separated by comma) you want to see and then press Enter. \nOr please enter all and than press Enter");
                         inputCategory = Console.ReadLine();                    
 

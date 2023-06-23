@@ -13,16 +13,7 @@ namespace HomeBudget.App.Concrete
         public CategoryService()
         {
             Initialize();
-        }
-        public void ShowAllCategories(List<Category> categories)
-        {                      
-                Console.WriteLine();
-                Console.WriteLine("Id\tName");
-                foreach (var category in categories)
-                {
-                    Console.WriteLine($"{category.Id}\t{category.Name}");
-                }
-        }
+        }       
 
         private void Initialize()
         {

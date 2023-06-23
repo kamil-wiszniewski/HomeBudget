@@ -44,7 +44,7 @@ namespace HomeBudget.App.Managers
                     case '1':
                         Console.Clear();
                         Console.WriteLine("SHOW ALL CATEGORIES");
-                        _categoryService.ShowAllCategories(categories);
+                        ShowAllCategories(categories);
                         Console.WriteLine("\nPress any key to continue...");
                         Console.ReadKey();
 
@@ -56,7 +56,7 @@ namespace HomeBudget.App.Managers
 
                         if (answer.KeyChar.ToString() == "y")
                         {
-                            _categoryService.ShowAllCategories(categories);
+                            ShowAllCategories(categories);
                         }
 
                         Console.WriteLine("\nPlease enter name for new category:");
@@ -108,7 +108,7 @@ namespace HomeBudget.App.Managers
 
             if (answer2.KeyChar.ToString() == "y")
             {
-                _categoryService.ShowAllCategories(categories);
+                ShowAllCategories(categories);
             }
 
             Console.WriteLine("Please enter the id of the category you want to remove");
@@ -134,6 +134,15 @@ namespace HomeBudget.App.Managers
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
             }
-        }        
+        }
+        public void ShowAllCategories(List<Category> categories)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Id\tName");
+            foreach (var category in categories)
+            {
+                Console.WriteLine($"{category.Id}\t{category.Name}");
+            }
+        }
     }
 }
