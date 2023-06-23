@@ -13,7 +13,27 @@ namespace HomeBudget.App.Concrete
         public CategoryService()
         {
             Initialize();
-        }       
+        } 
+        
+        public bool IfExists(int idToCheck) 
+        {
+            var categories = GetAllItmes();
+            if(categories.Any(category => category.Id == idToCheck)) 
+            {
+                return true;
+            }
+            else 
+            { 
+                return false; 
+            }
+        }
+
+        public Category CategoryToRemove(int idToCheck) 
+        {
+            var categories = GetAllItmes();
+            var categoryToRemove = categories.First(c => c.Id == idToCheck);
+            return categoryToRemove;
+        }
 
         private void Initialize()
         {

@@ -44,7 +44,7 @@ namespace HomeBudget.App.Managers
                     case '1':
                         Console.Clear();
                         Console.WriteLine("SHOW ALL CATEGORIES");
-                        ShowAllCategories(categories);
+                        ShowAllCategories();
                         Console.WriteLine("\nPress any key to continue...");
                         Console.ReadKey();
 
@@ -56,7 +56,7 @@ namespace HomeBudget.App.Managers
 
                         if (answer.KeyChar.ToString() == "y")
                         {
-                            ShowAllCategories(categories);
+                            ShowAllCategories();
                         }
 
                         Console.WriteLine("\nPlease enter name for new category:");
@@ -100,15 +100,13 @@ namespace HomeBudget.App.Managers
             }
         }
         public void RemoveCategory()
-        {
-            var categories = _categoryService.GetAllItmes();
-
+        {         
             Console.WriteLine("\nDo you want to see all categories? (y/n)");
             var answer2 = Console.ReadKey();
 
             if (answer2.KeyChar.ToString() == "y")
             {
-                ShowAllCategories(categories);
+                ShowAllCategories();
             }
 
             Console.WriteLine("Please enter the id of the category you want to remove");
@@ -117,12 +115,11 @@ namespace HomeBudget.App.Managers
             int idToCheck;
             Int32.TryParse(idEntered.ToString(), out idToCheck);
 
-            bool exists = categories.Any(entry => entry.Id == idToCheck);
+            bool exists = _categoryService.IfExists(idToCheck);
 
             if (exists)
-            {
-                Category categoryToRemove = categories.FirstOrDefault(e => e.Id == idToCheck);
-                _categoryService.RemoveItem(categoryToRemove);
+            {               
+                _categoryService.RemoveItem(_categoryService.CategoryToRemove(idToCheck));
 
                 Console.WriteLine("Category with id {0} has been removed.", idToCheck);
                 Console.WriteLine("\nPress any key to continue...");
@@ -135,8 +132,10 @@ namespace HomeBudget.App.Managers
                 Console.ReadKey();
             }
         }
-        public void ShowAllCategories(List<Category> categories)
+        public void ShowAllCategories()
         {
+            var categories = _categoryService.GetAllItmes();
+
             Console.WriteLine();
             Console.WriteLine("Id\tName");
             foreach (var category in categories)
