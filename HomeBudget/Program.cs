@@ -36,7 +36,7 @@ while (true)
             Console.Clear();
             Console.WriteLine("SHOW ALL ENTRIES");
 
-            entryService.ShowAllEntries(entries);
+            entryManager.ShowAllEntries(entries);
             
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();

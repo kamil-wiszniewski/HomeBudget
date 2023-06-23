@@ -18,7 +18,7 @@ namespace HomeBudget.App.Concrete
             _categoryService = categoryService;
             Seed(_categoryService);
         }
-        public void ShowAllEntries(List<Entry> entries)
+        /*public void ShowAllEntries(List<Entry> entries)
         {            
                 Console.WriteLine();
                 Console.WriteLine("Id\tType\t\tCategory\tDate\t\tAmount\tDescription");
@@ -39,7 +39,7 @@ namespace HomeBudget.App.Concrete
 
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
-        }
+        }*/
         private void Seed(CategoryService categoryService)
         {
             AddItem(new Entry(1, TypeId.Income, categoryService.Items[3], new DateTime(2023, 1, 1), 5000.00m, "salary"));

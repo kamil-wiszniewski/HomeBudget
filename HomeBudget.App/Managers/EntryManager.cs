@@ -108,7 +108,7 @@ namespace HomeBudget.App.Managers
             var answer = Console.ReadKey();
             if (answer.KeyChar.ToString() == "y")
             {
-                _entryService.ShowAllEntries(entries);
+                ShowAllEntries(entries);
             }
 
             Console.WriteLine("\nPlease enter the id of the entry you want to remove");
@@ -145,7 +145,7 @@ namespace HomeBudget.App.Managers
             var answer = Console.ReadKey();
             if (answer.KeyChar.ToString() == "y")
             {
-                _entryService.ShowAllEntries(entries);
+                ShowAllEntries(entries);
             }
 
             Console.WriteLine("\nPlease enter the id of the entry you want to see");
@@ -342,14 +342,14 @@ namespace HomeBudget.App.Managers
                             {
                                 filteredEntries = entries.Where(e => e.Date >= startDate && e.Date <= endDate &&
                                                                      e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
-                                _entryService.ShowFilteredEntries(filteredEntries);
+                                ShowFilteredEntries(filteredEntries);
                             }
                             else
                             {
                                 filteredEntries = entries.Where(e => searchedCategories.Contains(e.Category.Id) &&
                                                                 e.Date >= startDate && e.Date <= endDate &&
                                                                 e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
-                                _entryService.ShowFilteredEntries(filteredEntries);
+                                ShowFilteredEntries(filteredEntries);
                             }
                         }
                         else if (typeIdFilter == "1")
@@ -359,7 +359,7 @@ namespace HomeBudget.App.Managers
                                 filteredEntries = entries.Where(e => e.TypeId == TypeId.Income &&
                                                                      e.Date >= startDate && e.Date <= endDate &&
                                                                      e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
-                                _entryService.ShowFilteredEntries(filteredEntries);
+                                ShowFilteredEntries(filteredEntries);
                             }
                             else
                             {
@@ -367,7 +367,7 @@ namespace HomeBudget.App.Managers
                                                                 e.TypeId == TypeId.Income &&
                                                                 e.Date >= startDate && e.Date <= endDate &&
                                                                 e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
-                                _entryService.ShowFilteredEntries(filteredEntries);
+                                ShowFilteredEntries(filteredEntries);
                             }
                         }
                         else
@@ -377,7 +377,7 @@ namespace HomeBudget.App.Managers
                                 filteredEntries = entries.Where(e => e.TypeId == TypeId.Expense &&
                                                                      e.Date >= startDate && e.Date <= endDate &&
                                                                      e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
-                                _entryService.ShowFilteredEntries(filteredEntries);
+                                ShowFilteredEntries(filteredEntries);
                             }
                             else
                             {
@@ -385,7 +385,7 @@ namespace HomeBudget.App.Managers
                                                                 e.TypeId == TypeId.Expense &&
                                                                 e.Date >= startDate && e.Date <= endDate &&
                                                                 e.Amount >= minAmount && e.Amount <= maxAmount).ToList();
-                                _entryService.ShowFilteredEntries(filteredEntries);
+                                ShowFilteredEntries(filteredEntries);
                             }
                         }  
                         
@@ -402,6 +402,29 @@ namespace HomeBudget.App.Managers
                         break;
                 }
             }
+        }
+
+        public void ShowAllEntries(List<Entry> entries)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Id\tType\t\tCategory\tDate\t\tAmount\tDescription");
+            foreach (var entry in entries)
+            {
+                Console.WriteLine($"{entry.Id}\t{entry.TypeId}\t\t{entry.Category.Name}\t\t{entry.Date.ToShortDateString()}\t{entry.Amount}\t{entry.Description}");
+            }
+        }
+
+        public void ShowFilteredEntries(List<Entry> entries)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Id\tType\t\tCategory\tDate\t\tAmount\tDescription");
+            foreach (var entry in entries)
+            {
+                Console.WriteLine($"{entry.Id}\t{entry.TypeId}\t\t{entry.Category.Name}\t\t{entry.Date.ToShortDateString()}\t{entry.Amount}\t{entry.Description}");
+            }
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
         }
     }
 }
