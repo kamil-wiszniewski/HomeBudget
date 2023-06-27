@@ -55,12 +55,12 @@ namespace HomeBudget.App.Managers
             }
 
             int categoryId;
-            var chosenCategory = Console.ReadKey();            
+            var chosenCategory = Console.ReadLine();            
 
-            while (!Int32.TryParse(chosenCategory.KeyChar.ToString(), out categoryId) || categoryId > categories.Count)
+            while (!Int32.TryParse(chosenCategory.ToString(), out categoryId) || categoryId > categories.Count)
             {
                 Console.WriteLine("\nYou have entered an incorrect value. Please try again");
-                chosenCategory = Console.ReadKey();                
+                chosenCategory = Console.ReadLine();                
             }
 
             Category category = new Category(categoryId, categories[categoryId - 1].Name);
@@ -159,12 +159,7 @@ namespace HomeBudget.App.Managers
             if (exists)
             {
                 Entry entryToShow = entries.FirstOrDefault(e => e.Id == idToCheck);
-                Console.WriteLine($"Entry id: {entryToShow.Id}");
-                Console.WriteLine($"Entry type id: {entryToShow.TypeId}");
-                Console.WriteLine($"Entry category id: {entryToShow.Category.Name}");
-                Console.WriteLine($"Entry date: {entryToShow.Date.ToShortDateString()}");
-                Console.WriteLine($"Entry amount: {entryToShow.Amount}");
-                Console.WriteLine($"Entry description: {entryToShow.Description}");
+                Console.WriteLine(entryToShow.ToString());
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
             }

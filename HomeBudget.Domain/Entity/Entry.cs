@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 
 namespace HomeBudget.Domain.Entity
@@ -29,5 +30,10 @@ namespace HomeBudget.Domain.Entity
             Amount = amount;
             Description = description;
         }
+
+        public override string ToString()
+        {
+            return $"\nENTRY DETAILS: \nid: {Id}\ntypeId: {TypeId}\ncategory: {Category.Name}\ndate: {Date.ToShortDateString()}\namount: {Amount}\ndescription: {Description}";
+        }            
     }
 }
