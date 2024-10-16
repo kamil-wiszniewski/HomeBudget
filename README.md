@@ -6,3 +6,7 @@ Console app developed as part of a C# course to manage personal finances.
 - Designed a category management system to organize and categorize budget entries for better financial tracking.
 
 Technologies used: C#
+
+![Screen1](images/1.png)
+
+More screenshots: [images](images/)
